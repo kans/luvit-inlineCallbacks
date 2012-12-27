@@ -1,8 +1,8 @@
 local coroutine = require('coroutine')
 
+local exports = {}
 
--- unfortunately, we need to call ourselves so we can't declare local
-__inlined_callbacks = function(coro, cb, ...)
+exports.__inline_callbacks = function(coro, cb, ...)
   local v = ...
   local previous = nil
   local no_errs = true
@@ -25,21 +25,20 @@ __inlined_callbacks = function(coro, cb, ...)
        -- shove in a cb and call it (as a tail call just in case)
       return v(function(...)
         -- we resume ourselves later
-        return __inlined_callbacks(coro, cb, ...)
+        return exports.__inline_callbacks(coro, cb, ...)
       end)
     end
 
   end
 end
 
-local inlined_callbacks = function(f)
+exports.inline_callbacks = function(f)
   local coro = coroutine.create(f)
   return function(cb, ...)
-    return __inlined_callbacks(coro, cb, ...)
+    return exports.__inline_callbacks(coro, cb, ...)
   end
 end
 
-return {
-  inlined_callbacks=inlined_callbacks,
-  yield = coroutine.yield
-}
+exports.yield = coroutine.yield
+
+return exports
