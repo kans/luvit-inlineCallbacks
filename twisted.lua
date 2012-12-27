@@ -11,7 +11,8 @@ exports.__inline_callbacks = function(coro, cb, ...)
     previous = v
 
     if coroutine.status(coro) == 'dead' then
-      return cb(nil, previous)
+      -- todo- pcall this and shove the result into the second argument or return an error or something
+      return cb(unpack(previous))
     end
 
      -- yielded a function...

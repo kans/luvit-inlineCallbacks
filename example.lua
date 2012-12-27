@@ -20,7 +20,7 @@ local test = twisted.inline_callbacks(function()
   -- and async
   local f = function(cb)
     p('calling in ' .. res .. ' ms')
-    timer.setTimeout(res, cb, res+2)
+    timer.setTimeout(res, cb, {nil, res+2})
   end
   return yield(f)
 end)
