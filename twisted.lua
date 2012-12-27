@@ -14,19 +14,19 @@ exports.__inline_callbacks = function(coro, cb, ...)
       return cb(nil, previous)
     end
 
-    no_errs, v = coroutine.resume(coro, v)
-    -- donegoofed?
-    if no_errs ~= true then
-      return cb(v)
-    end
-
-    -- yielded a function...
+     -- yielded a function...
     if type(v) == 'function' then
-       -- shove in a cb and call it (as a tail call just in case)
+       -- add a callback that will invoke coro and bail
       return v(function(...)
         -- we resume ourselves later
         return exports.__inline_callbacks(coro, cb, ...)
       end)
+    end
+
+    no_errs, v = coroutine.resume(coro, v)
+    -- donegoofed?
+    if no_errs ~= true then
+      return cb(v)
     end
 
   end

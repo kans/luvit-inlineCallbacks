@@ -14,6 +14,9 @@ local test = twisted.inline_callbacks(function()
   -- sync if you like blue highlighted text
   res = coroutine.yield(res+2)
 
+  -- coroutines are first class citizens in lua
+  res = (function() return yield(res+2) end)()
+
   -- and async
   local f = function(cb)
     p('calling in ' .. res .. ' ms')
