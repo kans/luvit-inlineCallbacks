@@ -21,9 +21,11 @@ local test = twisted.inline_callbacks(function()
   local f = function(arg, cb)
     p('calling in ' .. res .. ' ms ')
     p("I'm an arg: " .. arg)
-    timer.setTimeout(res, cb, {nil, res+2})
+    timer.setTimeout(res, function() return cb(nil, res+2) end)
   end
-  return yield(f, 'extra arg')
+  err, res = yield(f, 'extra arg')
+  p(err, res)
+  return err, res
 end)
 
 local cb = function(err, res)
