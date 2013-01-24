@@ -11,7 +11,6 @@ local _unpack = function(...)
   -- this function is necessary because of the way lua
   --handles nil within tables and in unpack
   local args = {...}
-  p(args)
   local coro_status = false
   local next_call = nil
   local extras = {}
@@ -26,7 +25,6 @@ local _unpack = function(...)
       extra_length = k - 2
     end
   end
-  p(next_call, extras, extra_length)
   return coro_status, next_call, extras, extra_length
 end
 
@@ -40,18 +38,16 @@ __inline_callbacks = function(coro, cb, ...)
   while true do
     previous = v
     if coroutine.status(coro) == 'dead' then
-      print('dead')
       -- todo- pcall this and shove the result into the second argument or return an error or something
       if not cb then
         return
       end
 
       if type(previous) ~= 'table' then
-        cb(previous)
+        return cb(previous)
       else
-        cb(unpack(previous))
+        return cb(unpack(previous))
       end
-      return
     end
      -- yielded a function...
     if type(v) == 'function' then
@@ -67,11 +63,9 @@ __inline_callbacks = function(coro, cb, ...)
         length = length + 1
         extra_args[length] = f
       end
-      v(unpack(extra_args, 1, length))
-      return
+      return v(unpack(extra_args, 1, length))
     end
     no_errs, v, extra_args, length = _unpack(coroutine.resume(coro, v))
-    p(v, extra_args, length)
 
     -- donegoofed?
     if no_errs ~= true then
@@ -88,7 +82,7 @@ end
 exports.inline_callbacks = function(f)
   local coro = coroutine.create(f)
   return function(cb, ...)
-    __inline_callbacks(coro, cb, ...)
+    return __inline_callbacks(coro, cb, ...)
   end
 end
 

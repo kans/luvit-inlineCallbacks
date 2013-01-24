@@ -78,4 +78,22 @@ tests.test_sentinel = function(test, asserts)
   end)
 end
 
+tests.test_return = function(test, asserts)
+  local f = twisted.inline_callbacks(function()
+    local func = function(a, cb)
+      asserts.not_nil(cb, 'should be a function')
+      timer.setTimeout(10, cb, a)
+    end
+    local res = twisted.yield(func, 1, twisted.SENTINEL)
+    return {nil, res}
+  end)
+
+  f(function(err, res)
+    asserts.equal(err, nil)
+    asserts.equal(res, 1)
+    test.done()
+  end)
+end
+
+
 bourbon.run(tests)
