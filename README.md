@@ -16,11 +16,11 @@ A callback will automagically be supplied if you yield a function which will res
 local timer = require('timer')
 local coroutine = require('coroutine')
 
-local twisted = require('./init')
+local lic = require('./init')
 -- very thin wrapper around coroutine.yield
-local yield = twisted.yield
+local yield = lic.yield
 
-local test = twisted.inline_callbacks(function()
+local test = lic.inline_callbacks(function()
   local res = 0
   -- sync using wrapper
   res = yield(res+1)
@@ -43,7 +43,7 @@ local test = twisted.inline_callbacks(function()
   end
   -- you must pass in the sentinel value if the final arg can be nil
   --because there is no way to tell it exists otherwise
-  res = yield(f2, res, nil, twisted.SENTINEL)
+  res = yield(f2, res, nil, lic.SENTINEL)
   return {nil, res}
 end)
 
@@ -57,7 +57,7 @@ end
 test(cb)
 
 
-local failure = twisted.inline_callbacks(function()
+local failure = lic.inline_callbacks(function()
   -- throwing an error with return the err to our cb function
   res = yield(2)
   error('oh shit')
