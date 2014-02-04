@@ -3,7 +3,7 @@ luvit-inlineCallbacks
 
 This is a basic implemention of Twisted's inlineCallbacks for Luvit.  Instead of using Deferreds, we are forced to use functions to signal the completion of an aync event.
 
-A callback will automagically be supplied if you yield a function which will resume the coroutine when it is fired.  twisted.inlined_callbacks takes a function as its only argument and will return a function which will take a callback as its first argument.
+A callback will automagically be supplied if you yield a function which will resume the coroutine when it is fired.  lic.inlined_callbacks takes a function as its only argument and will return a function which will take a callback as its first argument.
 
 
 
